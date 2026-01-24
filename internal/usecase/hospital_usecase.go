@@ -17,14 +17,14 @@ func NewHospitalUsecase(r *repository.HospitalRepository) *HospitalUsecase {
 
 func (u *HospitalUsecase) Create(role domain.User, hospital *domain.Hospital) error {
 	if role.Role != domain.SuperAdmin {
-		return errors.New("Only Super Admin Can Access the Hospital")
+		return errors.New("Only Super Admin Allowed to Create the Hospital")
 	}
 	return u.hospitalRepo.Create(hospital)
 }
 
 func (u *HospitalUsecase) Delete(role domain.User, id int64) error {
 	if role.Role != domain.SuperAdmin {
-		return errors.New("Only Super Admin can delete hospital")
+		return errors.New("Only Super Admin Allowed to delete the hospital")
 	}
 	return u.hospitalRepo.Delete(id)
 }
