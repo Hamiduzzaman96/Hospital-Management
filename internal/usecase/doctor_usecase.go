@@ -61,3 +61,13 @@ func (u *DoctorUsecase) List(search string, page, size int64) ([]domain.Doctor, 
 	offset := (page - 1) * size
 	return u.doctorRepo.List(search, page, offset)
 }
+
+func (u *DoctorUsecase) DoctorAssign(role domain.User, hID, dID int64) error {
+	if role.Role != domain.HospitalAdmin {
+		return errors.New("Only Only Hospital Admin Allowed to Assign a Doctor")
+	}
+	return u.hospitalDoctorRelRepo.DoctorAssign(&domain.HospitalDoctorRelationship{
+		HospitalID: hID,
+		DoctorID:   dID,
+	})
+}
