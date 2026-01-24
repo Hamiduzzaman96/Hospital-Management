@@ -1,8 +1,8 @@
 package domain
 
 const (
-	SuperAdmin    string = "super_admin"
-	HospitalAdmin string = "hospital_admin"
+	SuperAdmin    = "super_admin"
+	HospitalAdmin = "hospital_admin"
 )
 
 type User struct {
