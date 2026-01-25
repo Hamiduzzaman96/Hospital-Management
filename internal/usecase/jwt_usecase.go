@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/domain"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/repository"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -19,6 +20,29 @@ func NewJwtUsecase(r *repository.UserRepository, secret string) *JwtUsecase {
 		userRepo: r,
 		secret:   secret,
 	}
+}
+
+func (u *JwtUsecase) Register(name, email, password, role string) error {
+	user, _ := u.userRepo.GetbyEmail(email)
+	if user != nil {
+		return errors.New("User already registered")
+	}
+
+	pass, err := bcrypt.GenerateFromPassword(
+		[]byte(password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		return err
+	}
+
+	newUser := &domain.User{
+		Name:     name,
+		Email:    email,
+		Password: string(pass),
+		Role:     role,
+	}
+	return u.userRepo.Create(newUser)
 }
 
 func (u *JwtUsecase) Login(email, password string) (string, error) {
