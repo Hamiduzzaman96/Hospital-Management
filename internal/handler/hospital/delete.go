@@ -1,12 +1,12 @@
 package hospital
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/domain"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/middleware"
+	"github.com/Hamiduzzaman96/Hospital-Management.git/pkg/helper"
 )
 
 func (h *HospitalHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -28,12 +28,8 @@ func (h *HospitalHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := h.hh.Delete(user, id); err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
+		helper.Error(w, http.StatusForbidden, err.Error())
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(map[string]string{
-		"meassge": "Hospital deleted successfully",
-	})
+
+	helper.Success(w, 200, "Hospital deleted successfully", nil)
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/domain"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/middleware"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/usecase"
+	"github.com/Hamiduzzaman96/Hospital-Management.git/pkg/helper"
 )
 
 type HospitalHandler struct {
@@ -28,11 +29,8 @@ func (h *HospitalHandler) Create(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value(middleware.UserContextKey).(domain.User)
 
 	if err := h.hh.Create(user, &hospital); err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
+		helper.Error(w, http.StatusForbidden, err.Error())
 	}
-	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(map[string]string{
-		"message": "Hospital created successfully",
-	})
+
+	helper.Success(w, 200, "Hospital created successfully", nil)
 }

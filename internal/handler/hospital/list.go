@@ -1,9 +1,10 @@
 package hospital
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/Hamiduzzaman96/Hospital-Management.git/pkg/helper"
 )
 
 func (h *HospitalHandler) List(w http.ResponseWriter, r *http.Request) {
@@ -16,9 +17,8 @@ func (h *HospitalHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	hospitals, err := h.hh.List(search, page, size)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		helper.Error(w, http.StatusForbidden, err.Error())
 	}
 
-	json.NewEncoder(w).Encode(hospitals)
+	helper.Success(w, 200, "", hospitals)
 }
