@@ -20,7 +20,7 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var userList domain.User
 
 	if err := json.NewDecoder(r.Body).Decode(&userList); err != nil {
-		http.Error(w, "Invalid register", 400)
+		http.Error(w, "Invalid JSON format", 400)
 		return
 	}
 
@@ -43,7 +43,7 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var userList domain.User
 
 	if err := json.NewDecoder(r.Body).Decode(&userList); err != nil {
-		http.Error(w, "Invalid Login", 400)
+		http.Error(w, "Invalid JSON format", 400)
 		return
 	}
 
