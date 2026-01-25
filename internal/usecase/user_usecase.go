@@ -10,19 +10,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type JwtUsecase struct {
+type UserUsecase struct {
 	userRepo *repository.UserRepository
 	secret   string
 }
 
-func NewJwtUsecase(r *repository.UserRepository, secret string) *JwtUsecase {
-	return &JwtUsecase{
+func NewJwtUsecase(r *repository.UserRepository, secret string) *UserUsecase {
+	return &UserUsecase{
 		userRepo: r,
 		secret:   secret,
 	}
 }
 
-func (u *JwtUsecase) Register(name, email, password, role string) error {
+func (u *UserUsecase) Register(name, email, password, role string, hospitalID int64) error {
 	user, _ := u.userRepo.GetbyEmail(email)
 	if user != nil {
 		return errors.New("User already registered")
@@ -45,7 +45,7 @@ func (u *JwtUsecase) Register(name, email, password, role string) error {
 	return u.userRepo.Create(newUser)
 }
 
-func (u *JwtUsecase) Login(email, password string) (string, error) {
+func (u *UserUsecase) Login(email, password string) (string, error) {
 	user, err := u.userRepo.GetbyEmail(email)
 	if err != nil {
 		return "", errors.New("You entered wrong credentials")
