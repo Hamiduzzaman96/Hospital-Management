@@ -17,7 +17,7 @@ func (h *DoctorHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	did, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		http.Error(w, "invalid doctor id", http.StatusBadRequest)
 		return
@@ -31,7 +31,7 @@ func (h *DoctorHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Context().Value(middleware.UserContextKey).(domain.User)
 
-	doctor.DocID = id
+	doctor.DocID = did
 	doctor.HospitalID = user.HospitalID
 
 	if err := h.du.Update(user, &doctor); err != nil {

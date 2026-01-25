@@ -33,7 +33,7 @@ func (h *DoctorHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	doctor.HospitalID = user.HospitalID
 
-	if err := h.du.Create(user, user.HospitalID, &doctor); err != nil {
+	if err := h.du.Create(user, &doctor); err != nil {
 		helper.Error(w, http.StatusBadRequest, err.Error())
 	}
 

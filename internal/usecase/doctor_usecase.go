@@ -8,48 +8,47 @@ import (
 )
 
 type DoctorUsecase struct {
-	doctorRepo            *repository.DoctorRepository
-	hospitalDoctorRelRepo *repository.HospitalDoctorRelationship
+	doctorRepo *repository.DoctorRepository
 }
 
-func NewDoctorUsecase(d *repository.DoctorRepository, h *repository.HospitalDoctorRelationship) *DoctorUsecase {
-	return &DoctorUsecase{doctorRepo: d, hospitalDoctorRelRepo: h}
+// constructor
+func NewDoctorUsecase(d *repository.DoctorRepository) *DoctorUsecase {
+	return &DoctorUsecase{
+		doctorRepo: d,
+	}
 }
 
-func (u *DoctorUsecase) Create(role domain.User, hospitalID int64, doctor *domain.Doctor) error {
-	if role.Role != domain.HospitalAdmin {
-		return errors.New("Only Hospital Admin Allowed to Create a Doctor")
+// create doctor
+func (u *DoctorUsecase) Create(user domain.User, doctor *domain.Doctor) error {
+	if user.Role != domain.HospitalAdmin {
+		return errors.New("only hospital admin can create a doctor")
 	}
 
-	err := u.doctorRepo.Create(doctor)
-	if err != nil {
-		return err
+	return u.doctorRepo.Create(doctor)
+}
+
+// update doctor info
+func (u *DoctorUsecase) Update(user domain.User, doctor *domain.Doctor) error {
+	if user.Role != domain.HospitalAdmin {
+		return errors.New("only hospital admin can update a doctor")
 	}
-
-	return u.hospitalDoctorRelRepo.DoctorAssign(&domain.HospitalDoctorRelationship{
-		HospitalID: hospitalID,
-		DoctorID:   doctor.DocID,
-	})
+	return u.doctorRepo.Update(doctor)
 }
 
-func (u *DoctorUsecase) Update(role domain.User, d *domain.Doctor) error {
-	if role.Role != domain.HospitalAdmin {
-		return errors.New("Only Only Hospital Admin Allowed to Update a Doctor")
+// delete doctor
+func (u *DoctorUsecase) Delete(user domain.User, doctorID int64) error {
+	if user.Role != domain.HospitalAdmin {
+		return errors.New("only hospital admin can delete a doctor")
 	}
-	return u.doctorRepo.Update(d)
+	return u.doctorRepo.Delete(doctorID)
 }
 
-func (u *DoctorUsecase) Delete(role domain.User, docID int64) error {
-	if role.Role != domain.HospitalAdmin {
-		return errors.New("Only Only Hospital Admin Allowed to Delete a Doctor")
-	}
-	return u.doctorRepo.Delete(docID)
+// get doctor by id
+func (u *DoctorUsecase) GetByID(doctorID int64) (*domain.Doctor, error) {
+	return u.doctorRepo.GetByID(doctorID)
 }
 
-func (u *DoctorUsecase) GetByID(docID int64) (*domain.Doctor, error) {
-	return u.doctorRepo.GetByID(docID)
-}
-
+// list doctors with pagination and search
 func (u *DoctorUsecase) List(search string, page, size int64) ([]domain.Doctor, error) {
 	if page < 1 {
 		page = 1
@@ -57,17 +56,6 @@ func (u *DoctorUsecase) List(search string, page, size int64) ([]domain.Doctor, 
 	if size < 1 {
 		size = 1
 	}
-
 	offset := (page - 1) * size
 	return u.doctorRepo.List(search, page, offset)
-}
-
-func (u *DoctorUsecase) DoctorAssign(role domain.User, hID, dID int64) error {
-	if role.Role != domain.HospitalAdmin {
-		return errors.New("Only Only Hospital Admin Allowed to Assign a Doctor")
-	}
-	return u.hospitalDoctorRelRepo.DoctorAssign(&domain.HospitalDoctorRelationship{
-		HospitalID: hID,
-		DoctorID:   dID,
-	})
 }
