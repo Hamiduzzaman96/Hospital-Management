@@ -16,19 +16,19 @@ func NewDoctorUsecase(d *repository.DoctorRepository, h *repository.HospitalDoct
 	return &DoctorUsecase{doctorRepo: d, hospitalDoctorRelRepo: h}
 }
 
-func (u *DoctorUsecase) Create(role domain.User, hospitalID int64, d *domain.Doctor) error {
+func (u *DoctorUsecase) Create(role domain.User, hospitalID int64, doctor *domain.Doctor) error {
 	if role.Role != domain.HospitalAdmin {
 		return errors.New("Only Hospital Admin Allowed to Create a Doctor")
 	}
 
-	err := u.doctorRepo.Create(d)
+	err := u.doctorRepo.Create(doctor)
 	if err != nil {
 		return err
 	}
 
 	return u.hospitalDoctorRelRepo.DoctorAssign(&domain.HospitalDoctorRelationship{
 		HospitalID: hospitalID,
-		DoctorID:   d.DocID,
+		DoctorID:   doctor.DocID,
 	})
 }
 
