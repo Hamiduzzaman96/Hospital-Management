@@ -3,18 +3,30 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
+	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/infrastructure/config"
 )
 
-func NewDatabaseConnection(dsn string) (*sql.DB, error) {
+func NewDatabaseConnection(cfg *config.Config) *sql.DB {
+	dsn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.DB_HOST,
+		cfg.DB_PORT,
+		cfg.DB_USER,
+		cfg.DB_Password,
+		cfg.DB_Name,
+		cfg.DB_SSLMode,
+	)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
-		return nil, err
-	}
-	err = db.Ping()
-	if err != nil {
-		return nil, err
+		log.Fatal("Failed to connet database", err)
 	}
 
-	fmt.Println("Connected database successfully")
-	return db, nil
+	if err := db.Ping(); err != nil {
+		log.Fatal("Connection failed to ping", err)
+	}
+
+	log.Println("Database connection successfully")
+	return db
 }
