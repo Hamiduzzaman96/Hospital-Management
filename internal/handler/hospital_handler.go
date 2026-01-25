@@ -59,3 +59,49 @@ func (h *HospitalHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(hospital)
 }
+
+func (h *HospitalHandler) List(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+
+	search := query.Get("search")
+
+	page, _ := strconv.ParseInt(query.Get("page"), 10, 64)
+	size, _ := strconv.ParseInt(query.Get("size"), 10, 64)
+
+	hospitals, err := h.hh.List(search, page, size)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(hospitals)
+}
+
+func (h *HospitalHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		http.Error(w, "Hospital ID is required", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid hospital Id", http.StatusBadRequest)
+		return
+	}
+
+	user, ok := r.Context().Value(middleware.UserContextKey).(domain.User)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if err := h.hh.Delete(user, id); err != nil {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(map[string]string{
+		"meassge": "Hospital deleted successfully",
+	})
+}
