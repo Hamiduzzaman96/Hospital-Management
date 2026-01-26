@@ -33,9 +33,9 @@ func (r *HospitalDoctorRelationship) RemoveDoctor(hospitalID, doctorID int64) er
 func (r *HospitalDoctorRelationship) ListDoctorsByHospital(hospitalID int64) ([]domain.Doctor, error) {
 	rows, err := r.db.Query(
 		`SELECT d.doc_id, d.name, d.email
-		 FROM doctors d
+		 FROM doctors doc
 		 JOIN hospital_doctor_rel hdr
-		   ON d.doc_id = hdr.doctor_id
+		   ON doc.doc_id = hdr.doctor_id
 		 WHERE hdr.hospital_id = $1`,
 		hospitalID,
 	)
