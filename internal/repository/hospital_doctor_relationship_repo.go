@@ -30,8 +30,29 @@ func (r *HospitalDoctorRelationship) RemoveDoctor(hospitalID, doctorID int64) er
 	return err
 }
 
-// func (r *HospitalDoctorRelationship) ListDoctorsByHospital(hospitalID int64) error {
-//  _, err := r.db.Exec(
+func (r *HospitalDoctorRelationship) ListDoctorsByHospital(hospitalID int64) ([]domain.Doctor, error) {
+	rows, err := r.db.Query(
+		`SELECT d.doc_id, d.name, d.email
+		 FROM doctors d
+		 JOIN hospital_doctor_rel hdr
+		   ON d.doc_id = hdr.doctor_id
+		 WHERE hdr.hospital_id = $1`,
+		hospitalID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-//  )
-// }
+	var doctors []domain.Doctor
+
+	for rows.Next() {
+		var d domain.Doctor
+		if err := rows.Scan(&d.DocID, &d.Name, &d.Email); err != nil {
+			return nil, err
+		}
+		doctors = append(doctors, d)
+	}
+
+	return doctors, nil
+}

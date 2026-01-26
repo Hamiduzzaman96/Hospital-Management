@@ -10,7 +10,6 @@ import (
 )
 
 func (h *DoctorHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	// 1. get id from query
 	idStr := r.URL.Query().Get("id")
 	if idStr == "" {
 		http.Error(w, "doctor id is required", http.StatusBadRequest)
@@ -23,10 +22,8 @@ func (h *DoctorHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. get user from context
 	user := r.Context().Value(middleware.UserContextKey).(domain.User)
 
-	// 3. call usecase
 	if err := h.du.Delete(user, id); err != nil {
 		helper.Error(w, http.StatusForbidden, err.Error())
 	}

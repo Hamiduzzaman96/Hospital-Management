@@ -42,11 +42,10 @@ func (u *HospitalDoctorUsecase) RemoveDoctor(user domain.User, doctorID int64) e
 	return u.repo.RemoveDoctor(rel.HospitalID, rel.DoctorID)
 }
 
-// ListDoctors lists all doctors assigned to the admin's hospital
 func (u *HospitalDoctorUsecase) ListDoctors(user domain.User) ([]domain.Doctor, error) {
 	if user.Role != domain.HospitalAdmin {
 		return nil, errors.New("only hospital admin can view doctors")
 	}
 
-	return u.ListDoctors(user)
+	return u.repo.ListDoctorsByHospital(user.HospitalID)
 }
