@@ -4,28 +4,20 @@ import (
 	"errors"
 
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/domain"
+	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/repository"
 )
 
 type HospitalDoctorUsecase struct {
-	repo domain.HospitalDoctorRepository
+	repo repository.HospitalDoctorRelationship
 }
 
-func NewHospitalDoctorUsecase(repo domain.HospitalDoctorRepository) *HospitalDoctorUsecase {
+func NewHospitalDoctorUsecase(repo repository.HospitalDoctorRelationship) *HospitalDoctorUsecase {
 	return &HospitalDoctorUsecase{repo: repo}
 }
 
-// AssignDoctor assigns a doctor to the admin's hospital
 func (u *HospitalDoctorUsecase) AssignDoctor(user domain.User, doctorID int64) error {
 	if user.Role != domain.HospitalAdmin {
 		return errors.New("only hospital admin can assign doctor")
-	}
-
-	exists, err := u.repo.DoctorExists(doctorID)
-	if err != nil {
-		return err
-	}
-	if !exists {
-		return errors.New("doctor not found")
 	}
 
 	rel := domain.HospitalDoctorRelationship{
@@ -33,7 +25,7 @@ func (u *HospitalDoctorUsecase) AssignDoctor(user domain.User, doctorID int64) e
 		DoctorID:   doctorID,
 	}
 
-	return u.repo.AssignDoctor(rel)
+	return u.repo.DoctorAssign(&rel)
 }
 
 // RemoveDoctor removes a doctor from the admin's hospital
@@ -47,7 +39,7 @@ func (u *HospitalDoctorUsecase) RemoveDoctor(user domain.User, doctorID int64) e
 		DoctorID:   doctorID,
 	}
 
-	return u.repo.RemoveDoctor(rel)
+	return u.repo.RemoveDoctor(rel.HospitalID, rel.DoctorID)
 }
 
 // ListDoctors lists all doctors assigned to the admin's hospital
@@ -56,5 +48,5 @@ func (u *HospitalDoctorUsecase) ListDoctors(user domain.User) ([]domain.Doctor, 
 		return nil, errors.New("only hospital admin can view doctors")
 	}
 
-	return u.repo.ListDoctorsByHospital(user.HospitalID)
+	return u.ListDoctors(user)
 }

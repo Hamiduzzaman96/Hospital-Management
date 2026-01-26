@@ -10,10 +10,3 @@ type HospitalDoctorUsecase interface {
 	RemoveDoctor(user User, doctorID int64) error
 	ListDoctors(user User) ([]Doctor, error)
 }
-
-type HospitalDoctorRepository interface {
-	AssignDoctor(rel HospitalDoctorRelationship) error
-	RemoveDoctor(rel HospitalDoctorRelationship) error
-	ListDoctorsByHospital(hospitalID int64) ([]Doctor, error)
-	DoctorExists(doctorID int64) (bool, error)
-}

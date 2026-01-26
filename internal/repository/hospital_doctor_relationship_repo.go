@@ -29,3 +29,9 @@ func (r *HospitalDoctorRelationship) RemoveDoctor(hospitalID, doctorID int64) er
 	)
 	return err
 }
+
+// func (r *HospitalDoctorRelationship) ListDoctorsByHospital(hospitalID int64) error {
+//  _, err := r.db.Exec(
+
+//  )
+// }
