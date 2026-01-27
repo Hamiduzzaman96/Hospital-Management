@@ -24,7 +24,7 @@ func (r *HospitalRepository) Create(hospital *domain.Hospital) error {
 
 func (r *HospitalRepository) Update(hospital *domain.Hospital) error {
 	_, err := r.db.Exec(
-		`UPDATE hosptals SET name = $1, address = $2 WHERE id = $3`,
+		`UPDATE hospitals SET name = $1, address = $2 WHERE id = $3`,
 		hospital.Name, hospital.Address, hospital.ID,
 	)
 	return err
@@ -61,7 +61,7 @@ func (r *HospitalRepository) GetByID(id int64) (*domain.Hospital, error) {
 
 func (r *HospitalRepository) List(search string, limit, offset int64) ([]domain.Hospital, error) {
 	rows, err := r.db.Query(
-		`SELECT id,name,address FROM hospitals WHERE name ILIKE '%'||$1'%'
+		`SELECT id,name,address FROM hospitals WHERE name ILIKE '%'||$1||'%'
 		ORDER BY id DESC
 		LIMIT $2 OFFSET $3`,
 		search, limit, offset,

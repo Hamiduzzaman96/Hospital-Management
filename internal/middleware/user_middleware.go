@@ -17,6 +17,7 @@ func NewAuthMiddleware(jwtsecret string) func(http.Handler) http.Handler {
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				http.Error(w, "No authorization header found", 401)
+				return
 			}
 
 			tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
