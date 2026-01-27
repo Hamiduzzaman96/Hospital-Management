@@ -31,13 +31,21 @@ func (r *HospitalRepository) Update(hospital *domain.Hospital) error {
 }
 
 func (r *HospitalRepository) Delete(id int64) error {
-	_, err := r.db.Exec(
+	result, err := r.db.Exec(
 		`DELETE FROM hospitals WHERE id = $1`,
 		id,
 	)
-	return err
-}
+	if err != nil {
+		return err
+	}
 
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
 func (r *HospitalRepository) GetByID(id int64) (*domain.Hospital, error) {
 	var hospital domain.Hospital
 
@@ -67,8 +75,22 @@ func (r *HospitalRepository) List(search string, limit, offset int64) ([]domain.
 
 	for rows.Next() {
 		var h domain.Hospital
-		rows.Scan(&h.ID, &h.Name, &h.Address)
+		if err := rows.Scan(&h.ID, &h.Name, &h.Address); err != nil {
+			return nil, err
+		}
 		hospitals = append(hospitals, h)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	return hospitals, nil
+}
+
+func (r *HospitalRepository) Count(search string) (int64, error) {
+	var count int64
+	err := r.db.QueryRow(
+		`SELECT COUNT(*) FROM hospitals WHERE name ILIKE '%'||$1||'%'`,
+		search,
+	).Scan(&count)
+	return count, err
 }

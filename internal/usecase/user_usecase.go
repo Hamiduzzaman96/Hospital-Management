@@ -22,10 +22,14 @@ func NewJwtUsecase(r *repository.UserRepository, secret string) *UserUsecase {
 	}
 }
 
-func (u *UserUsecase) Register(name, email, password, role string, hospitalID int64) error {
-	user, _ := u.userRepo.GetbyEmail(email)
+func (u *UserUsecase) Register(
+	name, email, password, role string,
+	hospitalID int64,
+) error {
+
+	user, _ := u.userRepo.GetByEmail(email)
 	if user != nil {
-		return errors.New("User already registered")
+		return errors.New("user already registered")
 	}
 
 	pass, err := bcrypt.GenerateFromPassword(
@@ -36,17 +40,27 @@ func (u *UserUsecase) Register(name, email, password, role string, hospitalID in
 		return err
 	}
 
-	newUser := &domain.User{
-		Name:     name,
-		Email:    email,
-		Password: string(pass),
-		Role:     role,
+	if role == domain.HospitalAdmin && hospitalID <= 0 {
+		return errors.New("hospital_id is required for hospital admin")
 	}
+
+	if role == domain.SuperAdmin {
+		hospitalID = 0
+	}
+
+	newUser := &domain.User{
+		Name:       name,
+		Email:      email,
+		Password:   string(pass),
+		Role:       role,
+		HospitalID: hospitalID,
+	}
+
 	return u.userRepo.Create(newUser)
 }
 
 func (u *UserUsecase) Login(email, password string) (string, error) {
-	user, err := u.userRepo.GetbyEmail(email)
+	user, err := u.userRepo.GetByEmail(email)
 	if err != nil {
 		return "", errors.New("You entered wrong credentials")
 	}

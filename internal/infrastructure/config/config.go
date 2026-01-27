@@ -20,7 +20,7 @@ type Config struct {
 func LoadConfig() *Config {
 	return &Config{
 		APPEnv:      getEnv("APP_ENV", "development"),
-		AppPort:     getEnv("APP_PORT", "8080"),
+		AppPort:     getEnv("APP_PORT", "8000"),
 		DB_HOST:     getEnv("DB_HOST", "localhost"),
 		DB_PORT:     getEnv("DB_PORT", "5432"),
 		DB_USER:     getEnv("DB_USER", "postgres"),

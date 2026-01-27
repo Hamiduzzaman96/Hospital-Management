@@ -56,8 +56,8 @@ func (r *DoctorRepository) GetByID(id int64) (*domain.Doctor, error) {
 }
 func (r *DoctorRepository) List(search string, limit, offset int64) ([]domain.Doctor, error) {
 	rows, err := r.db.Query(
-		`SELECT id, name, email FROM doctors WHERE name ILIKE '%'||$1||'%'
-		ORDER BY id DESC LIMIT &2 OFFSET $3`,
+		`SELECT doc_id, name, email FROM doctors WHERE name ILIKE '%'||$1||'%'
+		ORDER BY doc_id DESC LIMIT $2 OFFSET $3`,
 		search, limit, offset,
 	)
 	if err != nil {
@@ -68,8 +68,22 @@ func (r *DoctorRepository) List(search string, limit, offset int64) ([]domain.Do
 	var doctors []domain.Doctor
 	for rows.Next() {
 		var doc domain.Doctor
-		rows.Scan(&doc.DocID, &doc.Name, &doc.Email)
+		if err := rows.Scan(&doc.DocID, &doc.Name, &doc.Email); err != nil {
+			return nil, err
+		}
 		doctors = append(doctors, doc)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	return doctors, nil
+}
+
+func (r *DoctorRepository) Count(search string) (int64, error) {
+	var count int64
+	err := r.db.QueryRow(
+		`SELECT COUNT(*) FROM doctors WHERE name ILIKE '%'||$1||'%'`,
+		search,
+	).Scan(&count)
+	return count, err
 }

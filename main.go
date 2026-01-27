@@ -9,9 +9,15 @@ import (
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/repository"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/router"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/usecase"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Overload()
+	if err != nil {
+		log.Println(".env not found")
+	}
+
 	cfg := config.LoadConfig()
 	db := database.NewDatabaseConnection(cfg)
 

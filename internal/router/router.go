@@ -39,6 +39,10 @@ func NewRouter(
 		hospitalDoctorHandler: hospitaldoctor.NewHospitalDoctorHandler(*hosDocUC),
 		authMiddleware:        middleware.NewAuthMiddleware(cfg.JWT_Secret),
 	}
+	r.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Hospital Management API is running!"))
+	})
 
 	r.mux.HandleFunc("POST /api/v1/auth/register", r.userHandler.Register)
 	r.mux.HandleFunc("POST /api/v1/auth/login", r.userHandler.Login)
@@ -92,12 +96,6 @@ func NewRouter(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Delete),
 			),
-		),
-	)
-
-	r.mux.Handle("GET /api/v1/doctors",
-		r.authMiddleware(
-			http.HandlerFunc(r.doctorHandler.List),
 		),
 	)
 

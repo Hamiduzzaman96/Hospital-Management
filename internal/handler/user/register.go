@@ -24,6 +24,7 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		http.Error(w, "Please provide correct information", 400)
+		return
 	}
 
 	w.WriteHeader(200)

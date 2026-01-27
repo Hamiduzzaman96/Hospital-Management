@@ -23,11 +23,19 @@ func (r *HospitalDoctorRelationship) DoctorAssign(h *domain.HospitalDoctorRelati
 }
 
 func (r *HospitalDoctorRelationship) RemoveDoctor(hospitalID, doctorID int64) error {
-	_, err := r.db.Exec(
+	result, err := r.db.Exec(
 		`DELETE FROM hospital_doctor_rel WHERE hospital_id = $1 AND doctor_id = $2`,
 		hospitalID, doctorID,
 	)
-	return err
+	if err != nil {
+		return err
+	}
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return sql.ErrNoRows
+
+	}
+	return nil
 }
 
 func (r *HospitalDoctorRelationship) ListDoctorsByHospital(hospitalID int64) ([]domain.Doctor, error) {
@@ -52,6 +60,9 @@ func (r *HospitalDoctorRelationship) ListDoctorsByHospital(hospitalID int64) ([]
 			return nil, err
 		}
 		doctors = append(doctors, d)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return doctors, nil

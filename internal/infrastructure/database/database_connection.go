@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	_ "github.com/lib/pq"
+
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/infrastructure/config"
 )
 
@@ -18,6 +20,7 @@ func NewDatabaseConnection(cfg *config.Config) *sql.DB {
 		cfg.DB_Name,
 		cfg.DB_SSLMode,
 	)
+	log.Println("DSN:", dsn)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatal("Failed to connet database", err)
