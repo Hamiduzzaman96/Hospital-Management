@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/infrastructure/config"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/infrastructure/database"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/repository"
@@ -20,6 +22,8 @@ func main() {
 
 	cfg := config.LoadConfig()
 	db := database.NewDatabaseConnection(cfg)
+
+	database.NewMigrations(db, cfg)
 
 	userRepo := repository.NewUserRepository(db)
 	hospitalRepo := repository.NewHospitalRepository(db)

@@ -13,3 +13,15 @@ ALTER TABLE users ADD CONSTRAINT fk_users_hospital FOREIGN KEY (hospital_id) REF
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
 CREATE INDEX idx_users_hospital_id ON users(hospital_id);
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'fk_users_hospital'
+    ) THEN
+        ALTER TABLE users 
+        ADD CONSTRAINT fk_users_hospital 
+        FOREIGN KEY (hospital_id) REFERENCES hospitals(id) ON DELETE SET NULL;
+    END IF;
+END $$;
