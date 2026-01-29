@@ -17,7 +17,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 func (r *UserRepository) Create(u *domain.User) error {
 	if u.Name == "" || u.Email == "" || u.Password == "" || u.Role == "" {
-		return errors.New("missing required fields")
+		return errors.New("Required fields are missing")
 	}
 	return r.db.QueryRow(
 		`INSERT INTO users (name, email, password, role, hospital_id)
