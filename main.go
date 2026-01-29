@@ -30,7 +30,7 @@ func main() {
 	doctorRepo := repository.NewDoctorRepository(db)
 	hosDocRepo := repository.NewHospitalDoctorRelationship(db)
 
-	userUC := usecase.NewJwtUsecase(userRepo, cfg.JWT_Secret)
+	userUC := usecase.NewUserUsecase(userRepo, cfg.JWT_Secret)
 	hospitalUC := usecase.NewHospitalUsecase(hospitalRepo)
 	doctorUC := usecase.NewDoctorUsecase(doctorRepo)
 	hosDocUC := usecase.NewHospitalDoctorUsecase(*hosDocRepo)

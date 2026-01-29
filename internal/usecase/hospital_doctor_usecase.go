@@ -28,7 +28,6 @@ func (u *HospitalDoctorUsecase) AssignDoctor(user domain.User, doctorID int64) e
 	return u.repo.DoctorAssign(&rel)
 }
 
-// RemoveDoctor removes a doctor from the admin's hospital
 func (u *HospitalDoctorUsecase) RemoveDoctor(user domain.User, doctorID int64) error {
 	if user.Role != domain.HospitalAdmin {
 		return errors.New("only hospital admin can remove doctor")

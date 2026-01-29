@@ -11,14 +11,12 @@ type DoctorUsecase struct {
 	doctorRepo *repository.DoctorRepository
 }
 
-// constructor
 func NewDoctorUsecase(d *repository.DoctorRepository) *DoctorUsecase {
 	return &DoctorUsecase{
 		doctorRepo: d,
 	}
 }
 
-// create doctor
 func (u *DoctorUsecase) Create(user domain.User, doctor *domain.Doctor) error {
 	if user.Role != domain.HospitalAdmin {
 		return errors.New("only hospital admin can create a doctor")
@@ -27,7 +25,6 @@ func (u *DoctorUsecase) Create(user domain.User, doctor *domain.Doctor) error {
 	return u.doctorRepo.Create(doctor)
 }
 
-// update doctor info
 func (u *DoctorUsecase) Update(user domain.User, doctor *domain.Doctor) error {
 	if user.Role != domain.HospitalAdmin {
 		return errors.New("only hospital admin can update a doctor")
@@ -35,7 +32,6 @@ func (u *DoctorUsecase) Update(user domain.User, doctor *domain.Doctor) error {
 	return u.doctorRepo.Update(doctor)
 }
 
-// delete doctor
 func (u *DoctorUsecase) Delete(user domain.User, doctorID int64) error {
 	if user.Role != domain.HospitalAdmin {
 		return errors.New("only hospital admin can delete a doctor")
@@ -43,12 +39,10 @@ func (u *DoctorUsecase) Delete(user domain.User, doctorID int64) error {
 	return u.doctorRepo.Delete(doctorID)
 }
 
-// get doctor by id
 func (u *DoctorUsecase) GetByID(doctorID int64) (*domain.Doctor, error) {
 	return u.doctorRepo.GetByID(doctorID)
 }
 
-// list doctors with pagination and search
 func (u *DoctorUsecase) List(search string, page, size int64) ([]domain.Doctor, error) {
 	if page < 1 {
 		page = 1

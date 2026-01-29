@@ -15,18 +15,14 @@ type UserUsecase struct {
 	secret   string
 }
 
-func NewJwtUsecase(r *repository.UserRepository, secret string) *UserUsecase {
+func NewUserUsecase(r *repository.UserRepository, secret string) *UserUsecase {
 	return &UserUsecase{
 		userRepo: r,
 		secret:   secret,
 	}
 }
 
-func (u *UserUsecase) Register(
-	name, email, password, role string,
-	hospitalID int64,
-) error {
-
+func (u *UserUsecase) Register(name, email, password, role string, hospitalID int64) error {
 	user, _ := u.userRepo.GetByEmail(email)
 	if user != nil {
 		return errors.New("user already registered")
