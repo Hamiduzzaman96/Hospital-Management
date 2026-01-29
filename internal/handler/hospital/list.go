@@ -15,7 +15,7 @@ func (h *HospitalHandler) List(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.ParseInt(query.Get("page"), 10, 64)
 	size, _ := strconv.ParseInt(query.Get("size"), 10, 64)
 
-	hospitals, err := h.hh.List(search, page, size)
+	hospitals, err := h.hh.ListHospitals(search, page, size)
 	if err != nil {
 		helper.Error(w, http.StatusForbidden, err.Error())
 	}

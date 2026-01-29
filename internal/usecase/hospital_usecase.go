@@ -33,7 +33,7 @@ func (u *HospitalUsecase) GetByID(id int64) (*domain.Hospital, error) {
 	return u.hospitalRepo.GetByID(id)
 }
 
-func (u *HospitalUsecase) List(search string, page, size int64) ([]domain.Hospital, error) {
+func (u *HospitalUsecase) ListHospitals(search string, page, size int64) ([]domain.Hospital, error) {
 	if page < 1 {
 		page = 1
 	}
