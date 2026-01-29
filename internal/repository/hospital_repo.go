@@ -16,24 +16,24 @@ func NewHospitalRepository(db *sql.DB) *HospitalRepository {
 
 func (r *HospitalRepository) Create(hospital *domain.Hospital) error {
 	err := r.db.QueryRow(
-		`INSERT INTO hospitals (name, address) VALUES ($1,$2) RETURNING id`,
+		`INSERT INTO hospitals (name, address) VALUES ($1,$2) RETURNING hospital_id`,
 		hospital.Name, hospital.Address,
-	).Scan(&hospital.ID)
+	).Scan(&hospital.HospitalID)
 	return err
 }
 
 func (r *HospitalRepository) Update(hospital *domain.Hospital) error {
 	_, err := r.db.Exec(
-		`UPDATE hospitals SET name = $1, address = $2 WHERE id = $3`,
-		hospital.Name, hospital.Address, hospital.ID,
+		`UPDATE hospitals SET name = $1, address = $2 WHERE hospital_id = $3`,
+		hospital.Name, hospital.Address, hospital.HospitalID,
 	)
 	return err
 }
 
-func (r *HospitalRepository) Delete(id int64) error {
+func (r *HospitalRepository) Delete(hospital_id int64) error {
 	result, err := r.db.Exec(
-		`DELETE FROM hospitals WHERE id = $1`,
-		id,
+		`DELETE FROM hospitals WHERE hospital_id = $1`,
+		hospital_id,
 	)
 	if err != nil {
 		return err
@@ -46,13 +46,13 @@ func (r *HospitalRepository) Delete(id int64) error {
 
 	return nil
 }
-func (r *HospitalRepository) GetByID(id int64) (*domain.Hospital, error) {
+func (r *HospitalRepository) GetByID(hospital_id int64) (*domain.Hospital, error) {
 	var hospital domain.Hospital
 
 	err := r.db.QueryRow(
-		`SELECT id, name, address FROM hospitals WHERE id = $1`,
-		id,
-	).Scan(&hospital.ID, &hospital.Name, &hospital.Address)
+		`SELECT hospital_id, name, address FROM hospitals WHERE hospital_id = $1`,
+		hospital_id,
+	).Scan(&hospital.HospitalID, &hospital.Name, &hospital.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -61,8 +61,8 @@ func (r *HospitalRepository) GetByID(id int64) (*domain.Hospital, error) {
 
 func (r *HospitalRepository) List(search string, limit, offset int64) ([]domain.Hospital, error) {
 	rows, err := r.db.Query(
-		`SELECT id,name,address FROM hospitals WHERE name ILIKE '%'||$1||'%'
-		ORDER BY id DESC
+		`SELECT hospital_id, name, address FROM hospitals WHERE name ILIKE '%'||$1||'%'
+		ORDER BY hospital_id DESC
 		LIMIT $2 OFFSET $3`,
 		search, limit, offset,
 	)
@@ -75,7 +75,7 @@ func (r *HospitalRepository) List(search string, limit, offset int64) ([]domain.
 
 	for rows.Next() {
 		var h domain.Hospital
-		if err := rows.Scan(&h.ID, &h.Name, &h.Address); err != nil {
+		if err := rows.Scan(&h.HospitalID, &h.Name, &h.Address); err != nil {
 			return nil, err
 		}
 		hospitals = append(hospitals, h)

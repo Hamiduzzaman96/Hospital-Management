@@ -1,5 +1,5 @@
 CREATE TABLE hospitals (
-    id SERIAL PRIMARY KEY,
+    hospital_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

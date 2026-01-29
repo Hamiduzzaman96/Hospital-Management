@@ -1,7 +1,7 @@
 package domain
 
 type Hospital struct {
-	ID      int64  `json:"id"`
-	Name    string `json:"name"`
-	Address string `json:"address"`
+	HospitalID int64  `json:"hospital_id"`
+	Name       string `json:"name"`
+	Address    string `json:"address"`
 }
