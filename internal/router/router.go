@@ -44,11 +44,11 @@ func NewRouter(
 		w.Write([]byte("Hospital Management API is running!"))
 	})
 
-	r.mux.HandleFunc("POST /api/v1/auth/register", r.userHandler.Register)
-	r.mux.HandleFunc("POST /api/v1/auth/login", r.userHandler.Login)
+	r.mux.HandleFunc("POST /register", r.userHandler.Register)
+	r.mux.HandleFunc("POST /login", r.userHandler.Login)
 
 	//Hospital Routes - SuperAdmin
-	r.mux.Handle("POST /api/v1/hospitals",
+	r.mux.Handle("POST /hospitals",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.SuperAdmin)(
 				http.HandlerFunc(r.hospitalHandler.Create),
@@ -56,26 +56,26 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("DELETE /api/v1/hospitals",
+	r.mux.Handle("DELETE /hospitals",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.SuperAdmin)(
 				http.HandlerFunc(r.hospitalHandler.Delete),
 			),
 		),
 	)
-	r.mux.Handle("GET /api/v1/hospitals/{id}",
+	r.mux.Handle("GET /hospitals/{id}",
 		r.authMiddleware(
 			http.HandlerFunc(r.hospitalHandler.GetByID),
 		),
 	)
-	r.mux.Handle("GET /api/v1/hospitals",
+	r.mux.Handle("GET /hospitals",
 		r.authMiddleware(
 			http.HandlerFunc(r.hospitalHandler.List),
 		),
 	)
 
 	// Doctor Routers - HospitalAdmin
-	r.mux.Handle("POST /api/v1/doctors",
+	r.mux.Handle("POST /doctors",
 		r.authMiddleware(
 			middleware.NewJwtMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Create),
@@ -83,7 +83,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("PUT /api/v1/doctors",
+	r.mux.Handle("PUT /doctors",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Update),
@@ -91,7 +91,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("DELETE /api/v1/doctors",
+	r.mux.Handle("DELETE /doctors",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Delete),
@@ -99,14 +99,14 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("GET /api/v1/doctors",
+	r.mux.Handle("GET /doctors",
 		r.authMiddleware(
 			http.HandlerFunc(r.doctorHandler.List),
 		),
 	)
 
 	// Hospital - Doctor - Relationship  Routes - HospitalAdmin
-	r.mux.Handle("POST /api/v1/hospitals/doctors/assign",
+	r.mux.Handle("POST /hospitals/doctors/assign",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.hospitalDoctorHandler.AssignDoctor),
@@ -114,7 +114,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("DELETE /api/v1/hospitals/doctors",
+	r.mux.Handle("DELETE /hospitals/doctors",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.hospitalDoctorHandler.ListByDoctor),
