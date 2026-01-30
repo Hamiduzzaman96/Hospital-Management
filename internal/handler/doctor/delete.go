@@ -22,7 +22,11 @@ func (h *DoctorHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := r.Context().Value(middleware.UserContextKey).(domain.User)
+	user, ok := r.Context().Value(middleware.UserContextKey).(domain.User)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
 	if err := h.du.Delete(user, id); err != nil {
 		helper.Error(w, http.StatusForbidden, err.Error())
