@@ -16,6 +16,7 @@ import (
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/repository"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/router"
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/usecase"
+	"github.com/Hamiduzzaman96/Hospital-Management.git/pkg/helper"
 	"github.com/joho/godotenv"
 )
 
@@ -44,7 +45,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":" + cfg.AppPort,
-		Handler: router,
+		Handler: helper.EnableCORS(router),
 	}
 	go func() {
 		log.Println("server starting on :", cfg.AppPort)
