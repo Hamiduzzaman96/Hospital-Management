@@ -11,7 +11,7 @@ import (
 
 const UserContextKey string = "user"
 
-func NewAuthMiddleware(jwtsecret string) func(http.Handler) http.Handler {
+func NewJwtMiddleware(jwtsecret string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")
