@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
@@ -36,7 +41,32 @@ func main() {
 	hosDocUC := usecase.NewHospitalDoctorUsecase(*hosDocRepo)
 
 	router := router.NewRouter(cfg, userUC, hospitalUC, doctorUC, hosDocUC)
-	log.Printf("Server starting on :%s", cfg.AppPort)
-	log.Fatal(http.ListenAndServe(":"+cfg.AppPort, router))
+
+	server := &http.Server{
+		Addr:    ":" + cfg.AppPort,
+		Handler: router,
+	}
+	go func() {
+		log.Println("server starting on :", cfg.AppPort)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal("Server connection not working", err)
+		}
+	}()
+
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
+	<-ch
+
+	log.Println("Shutting down server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Println("Server shutdown", err)
+	}
+
+	db.Close()
+	log.Println("Server stopped")
 
 }
