@@ -1,4 +1,4 @@
--- Create users table
+
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -10,12 +10,12 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create indexes (foreign key নাই!)
+
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_users_hospital_id ON users(hospital_id);
 
--- Check constraint যোগ করুন (optional but recommended)
+
 ALTER TABLE users ADD CONSTRAINT chk_hospital_id_for_role 
 CHECK (
     (role = 'super_admin' AND hospital_id = 0) OR 

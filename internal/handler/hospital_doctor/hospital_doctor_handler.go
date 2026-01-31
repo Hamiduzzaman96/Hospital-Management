@@ -1,7 +1,6 @@
 package hospitaldoctor
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -65,10 +64,11 @@ func (h *HospitalDoctorHandler) RemoveDoctor(w http.ResponseWriter, r *http.Requ
 func (h *HospitalDoctorHandler) ListByDoctor(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value(middleware.UserContextKey).(domain.User)
 
-	doctor, err := h.hosdoc.ListDoctors(user)
+	doctors, err := h.hosdoc.ListDoctors(user)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusForbidden)
+		helper.Error(w, http.StatusForbidden, err.Error())
+		return
 	}
 
-	json.NewEncoder(w).Encode(doctor)
+	helper.Success(w, http.StatusOK, "Assigned doctors list", doctors)
 }

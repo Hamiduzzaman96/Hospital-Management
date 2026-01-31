@@ -50,7 +50,7 @@ func NewRouter(
 	r.mux.HandleFunc("POST /login", r.userHandler.Login)
 
 	//Hospital Routes - SuperAdmin
-	r.mux.Handle("POST /hospitals",
+	r.mux.Handle("POST /hospitals/create",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.SuperAdmin)(
 				http.HandlerFunc(r.hospitalHandler.Create),
@@ -58,7 +58,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("DELETE /hospitals",
+	r.mux.Handle("DELETE /hospitals/delete",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.SuperAdmin)(
 				http.HandlerFunc(r.hospitalHandler.Delete),
@@ -70,14 +70,14 @@ func NewRouter(
 			http.HandlerFunc(r.hospitalHandler.GetByID),
 		),
 	)
-	r.mux.Handle("GET /hospitals",
+	r.mux.Handle("GET /hospitals/list",
 		r.authMiddleware(
 			http.HandlerFunc(r.hospitalHandler.List),
 		),
 	)
 
 	// Doctor Routers - HospitalAdmin
-	r.mux.Handle("POST /doctors",
+	r.mux.Handle("POST /doctors/create",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Create),
@@ -85,7 +85,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("PUT /doctors",
+	r.mux.Handle("PUT /doctors/update",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Update),
@@ -93,7 +93,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("DELETE /doctors",
+	r.mux.Handle("DELETE /doctors/delete",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.doctorHandler.Delete),
@@ -101,7 +101,7 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("GET /doctors",
+	r.mux.Handle("GET /doctors/list",
 		r.authMiddleware(
 			http.HandlerFunc(r.doctorHandler.List),
 		),
@@ -116,7 +116,15 @@ func NewRouter(
 		),
 	)
 
-	r.mux.Handle("DELETE /hospitals/doctors",
+	r.mux.Handle("DELETE /hospitals/doctors/remove",
+		r.authMiddleware(
+			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
+				http.HandlerFunc(r.hospitalDoctorHandler.RemoveDoctor),
+			),
+		),
+	)
+
+	r.mux.Handle("GET /hospitals/doctors/list",
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.HospitalAdmin)(
 				http.HandlerFunc(r.hospitalDoctorHandler.ListByDoctor),

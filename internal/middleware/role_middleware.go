@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Hamiduzzaman96/Hospital-Management.git/internal/domain"
+	"github.com/Hamiduzzaman96/Hospital-Management.git/pkg/helper"
 )
 
 func NewRoleMiddleware(allowedRoles ...string) func(http.Handler) http.Handler {
@@ -11,9 +12,8 @@ func NewRoleMiddleware(allowedRoles ...string) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			user, ok := r.Context().Value(UserContextKey).(domain.User)
-
 			if !ok {
-				http.Error(w, "Unauthorized user", 401)
+				helper.Error(w, http.StatusUnauthorized, "Unauthorized user")
 				return
 			}
 
@@ -23,8 +23,8 @@ func NewRoleMiddleware(allowedRoles ...string) func(http.Handler) http.Handler {
 					return
 				}
 			}
-			http.Error(w, "Forbidden", 403)
-		})
 
+			helper.Error(w, http.StatusForbidden, "Forbidden")
+		})
 	}
 }
