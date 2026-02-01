@@ -11,6 +11,10 @@ import (
 )
 
 func (h *DoctorHandler) Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		http.Error(w, "Only PUT Method Allowed to create", http.StatusMethodNotAllowed)
+	}
+
 	idStr := r.URL.Query().Get("id")
 	if idStr == "" {
 		http.Error(w, "doctor id is required", http.StatusBadRequest)

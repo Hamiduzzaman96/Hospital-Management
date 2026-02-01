@@ -51,6 +51,7 @@ func NewRouter(
 
 	//Hospital Routes - SuperAdmin
 	r.mux.Handle("POST /hospitals/create",
+
 		r.authMiddleware(
 			middleware.NewRoleMiddleware(domain.SuperAdmin)(
 				http.HandlerFunc(r.hospitalHandler.Create),

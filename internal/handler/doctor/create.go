@@ -21,6 +21,10 @@ func NewDoctorHandler(dh *usecase.DoctorUsecase) *DoctorHandler {
 func (h *DoctorHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var doctor domain.Doctor
 
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only Post Method Allowed to create", http.StatusMethodNotAllowed)
+	}
+
 	if err := json.NewDecoder(r.Body).Decode(&doctor); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
