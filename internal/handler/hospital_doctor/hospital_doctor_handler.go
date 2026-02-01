@@ -19,6 +19,10 @@ func NewHospitalDoctorHandler(uc usecase.HospitalDoctorUsecase) *HospitalDoctorH
 }
 
 func (h *HospitalDoctorHandler) AssignDoctor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only Post Method Allowed to Assaign a Doctor", http.StatusMethodNotAllowed)
+	}
+
 	docIdStr := r.URL.Query().Get("doctor_id")
 	if docIdStr == "" {
 		http.Error(w, "doctor id is required", http.StatusBadRequest)
@@ -41,6 +45,10 @@ func (h *HospitalDoctorHandler) AssignDoctor(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *HospitalDoctorHandler) RemoveDoctor(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Only DELETE Method Allowed to Delete", http.StatusMethodNotAllowed)
+	}
+
 	docIdStr := r.URL.Query().Get("doctor_id")
 	if docIdStr == "" {
 		http.Error(w, "doctor id is required", http.StatusBadRequest)
