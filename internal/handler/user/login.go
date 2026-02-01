@@ -8,6 +8,10 @@ import (
 )
 
 func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only Post Method Allowed to Login", http.StatusMethodNotAllowed)
+	}
+
 	var userList domain.User
 
 	if err := json.NewDecoder(r.Body).Decode(&userList); err != nil {
@@ -16,6 +20,7 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := h.uh.Login(userList.Email, userList.Password)
+
 	if err != nil {
 		http.Error(w, "Please provide correct email and password", 401)
 		return

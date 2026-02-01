@@ -9,6 +9,10 @@ import (
 )
 
 func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only Post Method Allowed to Register", http.StatusMethodNotAllowed)
+	}
+
 	var user domain.User
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
