@@ -10,6 +10,10 @@ import (
 )
 
 func (h *HospitalHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Only DELETE Method Allowed to Delete", http.StatusMethodNotAllowed)
+	}
+
 	idStr := r.URL.Query().Get("id")
 	if idStr == "" {
 		http.Error(w, "Hospital ID is required", http.StatusBadRequest)

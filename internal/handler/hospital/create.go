@@ -19,6 +19,11 @@ func NewHospitalHandler(hc *usecase.HospitalUsecase) *HospitalHandler {
 }
 
 func (h *HospitalHandler) Create(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only Post Method Allowed to create", http.StatusMethodNotAllowed)
+	}
+
 	var hospital domain.Hospital
 
 	if err := json.NewDecoder(r.Body).Decode(&hospital); err != nil {
